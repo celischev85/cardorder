@@ -95,4 +95,16 @@ public class CardOrderTest {
 
         assertEquals(expected, actual);
     }
+    @Test
+    void shouldShowErrorWhenAgreementNotChecked_TextShown() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79991234567");
+        // НЕ кликаем чекбокс
+        driver.findElement(By.cssSelector("button.button")).click();
+
+        String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid .checkbox__text")).getText().trim();
+
+        assertEquals(expected, actual);
+    }
 }
