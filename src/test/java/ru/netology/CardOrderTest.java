@@ -1,12 +1,18 @@
 package ru.netology;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.junit.jupiter.api.Disabled;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,7 +29,7 @@ public class CardOrderTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
+        //options.addArguments("--headless");//
         driver = new ChromeDriver(options);
 
         driver.get("http://localhost:9999");
@@ -31,8 +37,7 @@ public class CardOrderTest {
 
     @AfterEach
     void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        if (driver != null) { // driver.quit(); // } }
         }
     }
 
@@ -48,7 +53,7 @@ public class CardOrderTest {
 
         assertEquals(expected, actual);
     }
-    @Disabled("Валидация строки")
+
     @Test
     void shouldShowErrorWhenPhoneIsInvalid() {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
@@ -56,11 +61,14 @@ public class CardOrderTest {
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
         driver.findElement(By.cssSelector("button.button")).click();
 
-        String expected = "Телефон указан неверно. Должно быть 11 цифр, начиная с +7.";
-        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
+        By phoneErrorLocator = By.cssSelector("[data-test-id='phone'] .input__sub");
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(phoneErrorLocator));
+        String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+        String actual = driver.findElement(phoneErrorLocator).getText().trim();
         assertEquals(expected, actual);
     }
-    @Disabled("Валидация строки")
+
     @Test
     void shouldShowErrorWhenNameIsInvalid() {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Ivan Ivanov");
@@ -97,6 +105,7 @@ public class CardOrderTest {
 
         assertEquals(expected, actual);
     }
+
     @Test
     void shouldShowErrorWhenAgreementNotChecked_TextShown() {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
