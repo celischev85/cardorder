@@ -29,7 +29,7 @@ public class CardOrderTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
-        //options.addArguments("--headless");//
+        options.addArguments("--headless");
         driver = new ChromeDriver(options);
 
         driver.get("http://localhost:9999");
@@ -37,11 +37,14 @@ public class CardOrderTest {
 
     @AfterEach
     void tearDown() {
-        if (driver != null) { // driver.quit(); // } }
+        if (driver != null) {
+            driver.quit();
         }
     }
+        
 
-    @Test
+
+@Test
     void shouldSubmitOrderSuccessfully() {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79991234567");
